@@ -3,7 +3,24 @@
 @inject ArtistasAPI artistasAPI
 @inject NavigationManager navigationManager
 
-<h3>CadastrarArtista</h3>
+<h3>Cadastro de Artista</h3>
+
+<EditForm Model="@artistaForm" OnValidSubmit="Cadastrar">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+
+    <div class="form-group">
+        <label>Nome</label>
+        <InputText @bind-Value="artistaForm.Nome" class="input"/>
+    </div>
+
+    <div class="form-group">
+        <label>Biografia</label>
+        <InputTextArea @bind-Value="artistaForm.Biografia" class="input" rows="4" /> 
+    </div>
+
+    <button type="submit" class="btn">Cadastrar</button>
+</EditForm>
 
 @code {
     private ArtistaFormModel artistaForm = new();
@@ -16,6 +33,9 @@
             artistaForm.Biografia!,
             artistaForm.FotoPerfil
         );
+
+        await artistasAPI.AddArtistaAsync(request);
+        navigationManager.NavigateTo("/artistas");
     }
 
     public class ArtistaFormModel
