@@ -3,7 +3,37 @@
 @inject ArtistasAPI artistasAPI
 @inject NavigationManager navigationManager
 
-<h3>CadastrarArtista</h3>
+<h3>Cadastro de Artista</h3>
+
+<EditForm Model="@artistaForm" OnValidSubmit="Cadastrar">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+
+    <div class="form-group">
+        <label>Nome</label>
+        <InputText @bind-Value="artistaForm.Nome" class="input"/>
+    </div>
+
+    <div class="form-group">
+        <label>Biografia</label>
+        <InputTextArea @bind-Value="artistaForm.Biografia" class="input" rows="4" /> 
+    </div>
+
+    <div class="form-group">
+        <label>Foto de Perfil</label>
+        
+        @if (!string.IsNullOrEmpty(fileImage))
+        {
+            <img src="@fileImage" alt="Foto de Perfil" class="img-preview"/>
+        }
+
+        <InputFile OnChange="UploadFile" accept="image/jpeg/"/>
+    </div>
+
+    <br/>
+
+    <button type="submit" class="btn">Cadastrar</button>
+</EditForm>
 
 @code {
     private ArtistaFormModel artistaForm = new();
@@ -16,6 +46,24 @@
             artistaForm.Biografia!,
             artistaForm.FotoPerfil
         );
+
+        await artistasAPI.AddArtistaAsync(request);
+        navigationManager.NavigateTo("/artistas");
+    }
+
+    private async Task UploadFile(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        var format = "image/jpeg";
+        var resizedImage = await file.RequestImageFileAsync(format, 200, 200);
+
+        using var stream = resizedImage.OpenReadStream();
+        using var memory = new MemoryStream();
+        await stream.CopyToAsync(memory);
+
+        var imageUpload = Convert.ToBase64String(memory.ToArray());
+        fileImage = $"data:{format};base64,{imageUpload}";
+        artistaForm.FotoPerfil = imageUpload;
     }
 
     public class ArtistaFormModel
