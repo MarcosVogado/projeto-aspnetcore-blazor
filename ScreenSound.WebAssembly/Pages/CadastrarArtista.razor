@@ -1,0 +1,29 @@
+﻿@using System.ComponentModel.DataAnnotations
+@page "/cadastrarArtista"
+@inject ArtistasAPI artistasAPI
+@inject NavigationManager navigationManager
+
+<h3>CadastrarArtista</h3>
+
+@code {
+    private ArtistaFormModel artistaForm = new();
+    private string? fileImage;
+
+    private async Task Cadastrar()
+    {
+        var request = new ArtistaRequest(
+            artistaForm.Nome!,
+            artistaForm.Biografia!,
+            artistaForm.FotoPerfil
+        );
+    }
+
+    public class ArtistaFormModel
+    {
+        [Required(ErrorMessage = "O nome do artista é obrigatório.")]
+        public string? Nome { get; set; }
+        [Required(ErrorMessage = "A biografia do artista é obrigatória.")]
+        public string? Biografia { get; set; }
+        public string? FotoPerfil { get; set; }
+    }
+}
