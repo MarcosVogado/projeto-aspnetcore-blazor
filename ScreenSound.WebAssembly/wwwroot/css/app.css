@@ -1,4 +1,4 @@
-html, body {
+﻿html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
@@ -210,6 +210,23 @@ a.active {
     border-radius: 4px;
 }
 
+.input {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.img-preview {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    margin: 0.5rem 0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
 .btn {
     padding: 0.5rem 1rem;
     background-color: #9966FF;
@@ -237,4 +254,106 @@ a.active {
 
 .card-body {
     margin-top: 1rem;
+}
+
+@keyframes playing-highlight {
+    0% {
+        background-color: rgba(40, 255, 120, 0.18);
+    }
+
+    100% {
+        background-color: rgba(40, 255, 120, 0.38);
+    }
+}
+
+.playlist-header {
+    background: linear-gradient(90deg, #9966FF 0%, #000000 100%);
+    color: white;
+}
+
+.playlist-cover {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+
+.playlist-tracks {
+    background: #222;
+}
+
+.table > :not(caption) > * > * {
+    background-color: transparent;
+}
+
+.playlist-item::before {
+    content: '';
+    position: absolute;
+}
+
+.playing-row {
+    position: relative;
+    overflow: hidden;
+}
+
+    .playing-row::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 10%;
+        height: 100%;
+        background: linear-gradient(90deg, rgba(40,255,120,0.38) 0%, rgba(40,255,120,0.58) 100%);
+        animation: progress-bar-horizontal 1.2s linear infinite;
+        z-index: 0;
+    }
+
+    .playing-row > * {
+        position: relative;
+        z-index: 1;
+    }
+
+@keyframes progress-bar-horizontal {
+    0% {
+        width: 10%;
+    }
+
+    100% {
+        width: 100%;
+    }
+}
+
+/* Base para �cones play/stop usando Font Awesome */
+.fa-icon-playstop::before {
+    font-family: 'Font Awesome 6 Free', 'FontAwesome', Arial, sans-serif;
+    font-weight: 900;
+    display: inline-block;
+    font-size: 1.5em;
+    vertical-align: middle;
+}
+
+tr.playlist-item {
+    cursor: pointer;
+}
+
+.bi-play-fill::before {
+    content: "\f04b"; /* fa-play */
+    color: transparent;
+}
+
+tr:hover .bi-play-fill::before {
+    content: "\f04b"; /* fa-play */
+    color: black;
+}
+
+.bi-stop-fill::before {
+    content: "\f04d"; /* fa-stop */
+    color: red;
+}
+
+/* Esconde SVG interno do Bootstrap Icons se houver */
+.bi-play-fill > svg,
+.bi-stop-fill > svg {
+    display: none;
 }
