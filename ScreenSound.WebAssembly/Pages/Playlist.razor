@@ -1,6 +1,8 @@
 ﻿@page "/Playlist"
 @inject MusicasAPI musicasAPI
 @inject IJSRuntime JS
+@inject ILogger<Playlist> logger
+
 <h2>Playlist</h2>
 
 <div class="playlist-header d-flex align-items-center mb-4 p-3 bg-dark rounded">
@@ -52,13 +54,13 @@ else
 
 <script type="text/javascript">
     function scrollToElementByClass(className) {
-    const offset = 200; //200 px
-    const element = document.querySelector('.' + className);
+        const offset = 200; //200 px
+        const element = document.querySelector('.' + className);
 
     if (element) {
-    const elementTop = element.getBoundingClientRect().top + window.pageYOffset;
-    const scrollTo = elementTop - offset;
-    window.scrollTo({ top: scrollTo, behavior: 'smooth'});
+        const elementTop = element.getBoundingClientRect().top + window.pageYOffset;
+        const scrollTo = elementTop - offset;
+        window.scrollTo({ top: scrollTo, behavior: 'smooth'});
     }
     }
 </script>
@@ -69,7 +71,21 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        musicas = await musicasAPI.GetMusicasAsync();
+        logger.LogInformation("Inicializando a playlist.");
+
+        try
+        {
+            musicas = await musicasAPI.GetMusicasAsync();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError("Erro ao carregar as músicas." + ex.Message);
+        }
+
+        if (musicas != null)
+        {
+            logger.LogInformation($"Carregadas {musicas.Count} músicas com sucesso.");
+        }
     }
 
     private async Task AlternarPlay(int musicaId)
@@ -77,9 +93,11 @@ else
         if (musicaTocandoId == musicaId)
         {
             musicaTocandoId = null;
+            logger.LogInformation($"Música com ID {musicaId} pausada.");
         }
         else
         {
+            logger.LogInformation($"Iniciando música com ID {musicaId}.");
             musicaTocandoId = musicaId;
 
             await ScrollToMusicAsync();
@@ -88,6 +106,7 @@ else
 
             if (musicaTocandoId == musicaId)
             {
+                logger.LogInformation($"Passando para a próxima música.");
                 musicaId++;
                 StateHasChanged();
                 await AlternarPlay(musicaId);
